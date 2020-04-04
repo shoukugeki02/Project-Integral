@@ -100,10 +100,10 @@ int main()
 #include <cmath>
 using namespace std; 
   
-// *** In truth, it takes an intricate formula to find the area, but have to wait to see the coach from the friends, so give examples of problems from the lesson. ***//
+
 float givenFunction(float x, float y) 
 { 
-    return pow(pow(x, 4) + pow(y, 5), 0.5); 
+    return x*y; 
 } 
   
 
@@ -165,6 +165,8 @@ int main()
     // ly and uy are upper and lower limit of y integral 
     // h is the step size for integration wrt x 
     // k is the step size for integration wrt y 
+    float x=1.0;
+    float y=1.0;
     float h, k, lx, ux, ly, uy; 
     cout  << "input h \n";
     cin >> h;
