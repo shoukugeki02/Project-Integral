@@ -10,6 +10,9 @@ LRESULT CALLBACK WindowProcedure(HWND,UINT,WPARAM,LPARAM);
 void AddMenus(HWND);
 void AddControls(HWND);
 void loadImages();
+void registerDialogClass(HINSTANCE);
+void displayDialog(HWND);
+
 
 HMENU hMenu;
 HWND hBG;
@@ -26,6 +29,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args,int ncmdshow
 
     if(!RegisterClassW(&wc))
         return -1;
+    
+    registerDialogClass(hInst);
 
     CreateWindowW(L"Calculate",L"Calculate Integral",WS_MINIMIZEBOX|WS_SYSMENU|WS_VISIBLE,100,100,500,500,NULL,NULL,NULL,NULL);
     MSG msg = {0};
@@ -69,6 +74,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
             break;
         case WM_CREATE:
             loadImages();
+            displayDialog(hwnd);
             AddMenus(hwnd);
             AddControls(hwnd);
             break;
@@ -112,5 +118,39 @@ void loadImages()
     hLogoI = (HBITMAP)LoadImageW(NULL,L"LogoI.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
     hLogoII = (HBITMAP)LoadImageW(NULL,L"LogoII.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
     hExit = (HBITMAP)LoadImageW(NULL,L"Exit.bmp",IMAGE_BITMAP,100,50,LR_LOADFROMFILE);
+}
+
+//หน้าต่างใหม่
+
+LRESULT CALLBACK DialogProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
+{
+    switch(msg)
+    {
+        case WM_CLOSE:
+            DestroyWindow(hwnd);
+            break;
+        default:
+            return DefWindowProcW(hwnd,msg,wp,lp);
+    }
+}
+
+void registerDialogClass(HINSTANCE hInst)
+{
+    WNDCLASSW dialog = {0};
+
+    dialog.hbrBackground = (HBRUSH)COLOR_WINDOW ;
+    dialog.hCursor = LoadCursor(NULL,IDC_ARROW);
+    dialog.hInstance = hInst;
+    dialog.lpszClassName = L"Dialog Calculate";
+    dialog.lpfnWndProc = DialogProcedure;  
+
+    RegisterClassW(&dialog);
+}
+
+void displayDialog(HWND hwnd)
+{
+    HWND hDlg = CreateWindowW(L"Dialog Calculate",L"Double Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,0,0,500,500,hwnd,NULL,NULL,NULL);
+    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlg,(HMENU) 1,NULL,NULL);
+    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlg,(HMENU) 2,NULL,NULL);
 }
 
