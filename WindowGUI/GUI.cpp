@@ -4,6 +4,8 @@ using namespace std;
 #define HELP_MENU_DOUBLE 2
 #define HELP_MENU_INTEGRAL 1
 #define MENU_Exit 3
+#define MENU_INTEGRAL 4
+#define MENU_DOUBLE_INTEGRAL 5
 
 LRESULT CALLBACK WindowProcedure(HWND,UINT,WPARAM,LPARAM);
 
@@ -11,11 +13,12 @@ void AddMenus(HWND);
 void AddControls(HWND);
 void loadImages();
 void registerDialogClass(HINSTANCE);
-void displayDialog(HWND);
+void displayDialogSin(HWND);
+void displayDialogDou(HWND);
 
 
 HMENU hMenu;
-HWND hBG;
+HWND hBG,hMainWindow;
 HBITMAP hBGImage,hLogoI,hLogoII,hExit; 
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args,int ncmdshow){
@@ -32,7 +35,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args,int ncmdshow
     
     registerDialogClass(hInst);
 
-    CreateWindowW(L"Calculate",L"Calculate Integral",WS_MINIMIZEBOX|WS_SYSMENU|WS_VISIBLE,100,100,500,500,NULL,NULL,NULL,NULL);
+    hMainWindow = CreateWindowW(L"Calculate",L"Calculate Integral",WS_MINIMIZEBOX|WS_SYSMENU|WS_VISIBLE,100,100,500,500,NULL,NULL,NULL,NULL);
     MSG msg = {0};
 
     while( GetMessage(&msg,NULL,NULL,NULL))
@@ -68,13 +71,18 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
                 else if(val==IDNO){
 
                 }
+                case MENU_INTEGRAL:
+                    displayDialogSin(hwnd);
+                    break;
+                 case MENU_DOUBLE_INTEGRAL:
+                    displayDialogDou(hwnd);
+                    break;
                 break;
             }
 
             break;
         case WM_CREATE:
             loadImages();
-            displayDialog(hwnd);
             AddMenus(hwnd);
             AddControls(hwnd);
             break;
@@ -103,9 +111,9 @@ void AddControls(HWND hwnd)
 {
     hBG = CreateWindowW(L"Static",NULL,WS_VISIBLE|WS_CHILD|SS_BITMAP,0,0,0,0,hwnd,NULL,NULL,NULL);
     SendMessageW(hBG,STM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hBGImage);
-    HWND hButA = CreateWindowW(L"Button",L"INTEGRAL",WS_VISIBLE|WS_CHILD|BS_BITMAP,135,80,230,100,hwnd,NULL,NULL,NULL);
+    HWND hButA = CreateWindowW(L"Button",L"INTEGRAL",WS_VISIBLE|WS_CHILD|BS_BITMAP,135,80,230,100,hwnd,(HMENU) MENU_INTEGRAL,NULL,NULL);
     SendMessageW(hButA,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hLogoI);
-    HWND hButB = CreateWindowW(L"Button",L"DOUBLE INTEGRAL",WS_VISIBLE|WS_CHILD|BS_BITMAP,135,200,230,100,hwnd,NULL,NULL,NULL);
+    HWND hButB = CreateWindowW(L"Button",L"DOUBLE INTEGRAL",WS_VISIBLE|WS_CHILD|BS_BITMAP,135,200,230,100,hwnd,(HMENU) MENU_DOUBLE_INTEGRAL,NULL,NULL);
     SendMessageW(hButB,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hLogoII);
     HWND hButExit = CreateWindowW(L"Button",L"Exit",WS_VISIBLE|WS_CHILD|BS_BITMAP,200,340,100,50,hwnd,(HMENU) MENU_Exit,NULL,NULL);
     SendMessageW(hButExit,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hExit);
@@ -126,7 +134,16 @@ LRESULT CALLBACK DialogProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
 {
     switch(msg)
     {
+        case WM_COMMAND:
+            switch (wp)
+            {
+            case 1:
+                EnableWindow(hMainWindow,true);
+                DestroyWindow(hwnd);
+                break;
+            }
         case WM_CLOSE:
+            EnableWindow(hMainWindow,true);
             DestroyWindow(hwnd);
             break;
         default:
@@ -147,10 +164,18 @@ void registerDialogClass(HINSTANCE hInst)
     RegisterClassW(&dialog);
 }
 
-void displayDialog(HWND hwnd)
+void displayDialogSin(HWND hwnd)
 {
-    HWND hDlg = CreateWindowW(L"Dialog Calculate",L"Double Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,0,0,500,500,hwnd,NULL,NULL,NULL);
-    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlg,(HMENU) 1,NULL,NULL);
-    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlg,(HMENU) 2,NULL,NULL);
+    HWND hDlgA = CreateWindowW(L"Dialog Calculate",L"Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,700,100,500,500,hwnd,NULL,NULL,NULL);
+    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlgA,NULL,NULL,NULL);
+    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlgA,(HMENU) 1,NULL,NULL);
+    EnableWindow(hwnd,false);
 }
 
+void displayDialogDou(HWND hwnd)
+{
+    HWND hDlgB = CreateWindowW(L"Dialog Calculate",L"Double Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,700,100,500,500,hwnd,NULL,NULL,NULL);
+    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlgB,NULL,NULL,NULL);
+    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlgB,(HMENU) 1,NULL,NULL);
+    EnableWindow(hwnd,false);
+}
