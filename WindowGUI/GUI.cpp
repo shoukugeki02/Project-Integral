@@ -18,8 +18,8 @@ void displayDialogDou(HWND);
 
 
 HMENU hMenu;
-HWND hBG,hMainWindow;
-HBITMAP hBGImage,hLogoI,hLogoII,hExit; 
+HWND hBG,hMainWindow,hBGA,hBGB;
+HBITMAP hBGImage,hLogoI,hLogoII,hExit,hBGSin,hBGDou,hCal,hClose; 
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args,int ncmdshow){
     WNDCLASSW wc = {0};
@@ -57,11 +57,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
             {
                 case HELP_MENU_DOUBLE:
                 MessageBeep(MB_ICONINFORMATION);
-                MessageBox(hwnd,"","Double Integral",MB_OK);
+                MessageBox(hwnd,"You Baka!!","Double Integral",MB_OK);
                 break;
                 case HELP_MENU_INTEGRAL:
                 MessageBeep(MB_ICONINFORMATION);
-                MessageBox(hwnd,"","Integral",MB_OK);
+                MessageBox(hwnd,"You Baka!!","Integral",MB_OK);
                 break;
                 case MENU_Exit:
                 val = MessageBoxW(hwnd,L"Are you sure?",L"Message",MB_YESNO | MB_ICONWARNING);
@@ -122,10 +122,14 @@ void AddControls(HWND hwnd)
 
 void loadImages()
 {
-    hBGImage = (HBITMAP)LoadImageW(NULL,L"BG.bmp",IMAGE_BITMAP,492,450,LR_LOADFROMFILE);
-    hLogoI = (HBITMAP)LoadImageW(NULL,L"LogoI.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
-    hLogoII = (HBITMAP)LoadImageW(NULL,L"LogoII.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
-    hExit = (HBITMAP)LoadImageW(NULL,L"Exit.bmp",IMAGE_BITMAP,100,50,LR_LOADFROMFILE);
+    hBGImage = (HBITMAP)LoadImageW(NULL,L"picture\\BG.bmp",IMAGE_BITMAP,492,450,LR_LOADFROMFILE);
+    hLogoI = (HBITMAP)LoadImageW(NULL,L"picture\\LogoI.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
+    hLogoII = (HBITMAP)LoadImageW(NULL,L"picture\\LogoII.bmp",IMAGE_BITMAP,230,100,LR_LOADFROMFILE);
+    hExit = (HBITMAP)LoadImageW(NULL,L"picture\\Exit.bmp",IMAGE_BITMAP,100,50,LR_LOADFROMFILE);
+    hBGDou = (HBITMAP)LoadImageW(NULL,L"picture\\BGI.bmp",IMAGE_BITMAP,492,470,LR_LOADFROMFILE);
+    hBGSin = (HBITMAP)LoadImageW(NULL,L"picture\\BGII.bmp",IMAGE_BITMAP,492,470,LR_LOADFROMFILE);
+    hCal = (HBITMAP)LoadImageW(NULL,L"picture\\Cal.bmp",IMAGE_BITMAP,100,40,LR_LOADFROMFILE);
+    hClose = (HBITMAP)LoadImageW(NULL,L"picture\\Close.bmp",IMAGE_BITMAP,100,40,LR_LOADFROMFILE);
 }
 
 //หน้าต่างใหม่
@@ -140,6 +144,8 @@ LRESULT CALLBACK DialogProcedure(HWND hwnd,UINT msg,WPARAM wp,LPARAM lp)
             case 1:
                 EnableWindow(hMainWindow,true);
                 DestroyWindow(hwnd);
+                break;
+            default:
                 break;
             }
         case WM_CLOSE:
@@ -166,16 +172,24 @@ void registerDialogClass(HINSTANCE hInst)
 
 void displayDialogSin(HWND hwnd)
 {
-    HWND hDlgA = CreateWindowW(L"Dialog Calculate",L"Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,700,100,500,500,hwnd,NULL,NULL,NULL);
-    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlgA,NULL,NULL,NULL);
-    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlgA,(HMENU) 1,NULL,NULL);
+    HWND hDlgA = CreateWindowW(L"Dialog Calculate",L"Integral",WS_MINIMIZEBOX|WS_SYSMENU|WS_VISIBLE,700,100,500,500,hwnd,NULL,NULL,NULL);
+    hBGA = CreateWindowW(L"Static",NULL,WS_VISIBLE|WS_CHILD|SS_BITMAP,0,0,0,0,hDlgA,NULL,NULL,NULL);
+    SendMessageW(hBGA,STM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hBGSin);
+    HWND hButtonCalA = CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD|BS_BITMAP,20,20,100,40,hDlgA,NULL,NULL,NULL);
+    SendMessageW(hButtonCalA,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hCal);
+    HWND hButtonCloseA = CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD|BS_BITMAP,20,70,100,40,hDlgA,(HMENU) 1,NULL,NULL);
+    SendMessageW(hButtonCloseA,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hClose);
     EnableWindow(hwnd,false);
 }
 
 void displayDialogDou(HWND hwnd)
 {
-    HWND hDlgB = CreateWindowW(L"Dialog Calculate",L"Double Integral",WS_VISIBLE|WS_OVERLAPPEDWINDOW,700,100,500,500,hwnd,NULL,NULL,NULL);
-    CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD,20,20,100,40,hDlgB,NULL,NULL,NULL);
-    CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD,20,70,100,40,hDlgB,(HMENU) 1,NULL,NULL);
+    HWND hDlgB = CreateWindowW(L"Dialog Calculate",L"Double Integral",WS_MINIMIZEBOX|WS_SYSMENU|WS_VISIBLE,700,100,500,500,hwnd,NULL,NULL,NULL);
+    hBGB = CreateWindowW(L"Static",NULL,WS_VISIBLE|WS_CHILD|SS_BITMAP,0,0,0,0,hDlgB,NULL,NULL,NULL);
+    SendMessageW(hBGB,STM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hBGDou);
+    HWND hButtonCalB = CreateWindowW(L"Button",L"Calculate",WS_VISIBLE|WS_CHILD|BS_BITMAP,350,380,100,40,hDlgB,NULL,NULL,NULL);
+    SendMessageW(hButtonCalB,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hCal);
+    HWND hButtonCloseB =CreateWindowW(L"Button",L"Close",WS_VISIBLE|WS_CHILD|BS_BITMAP,240,380,100,40,hDlgB,(HMENU) 1,NULL,NULL);
+    SendMessageW(hButtonCloseB,BM_SETIMAGE,IMAGE_BITMAP,(LPARAM) hClose);
     EnableWindow(hwnd,false);
 }
